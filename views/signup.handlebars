@@ -6,6 +6,7 @@
           <button class="delete is-medium"></button>
           <form class="box has-background-grey-lighter">
             <div class="field">
+              <div id="signup_errors" class="has-text-danger"></div>
               <div class="field">
                 <label class="label">Username</label>
                 <div class="control">
@@ -27,11 +28,11 @@
               <div class="field">
                 <label class="label">Confirm Password</label>
                 <div class="control">
-                  <input type="password" placeholder="Enter Password" class="input" required>
+                  <input id="password_signup_check" type="password" placeholder="Enter Password" class="input" required>
                 </div>
               </div>
               <div class="field level">
-                <button class="button is-normal is-responsive is-primary level-right">
+                <button id="signup_button" class="button is-normal is-responsive is-primary level-right">
                   Create Account
                 </button>
               </div>
@@ -44,26 +45,37 @@
 </section>
 
 <script>
-   document.querySelector('#login_button').addEventListener('click', (event) => {
+   document.querySelector('#signup_button').addEventListener('click', (event) => {
+    console.log('haha');
     event.preventDefault();
     let username = document.querySelector('#username_signup').value;
     let email = document.querySelector('#email_signup').value;
     let password = document.querySelector('#password_signup').value;
+    let passwordCheck = document.querySelector('#password_signup_check').value;
     
-    console.log( email, password);
-    document.querySelector('#errors').textContent = '';
-    fetch('/api/user/', {
+    if (password != passwordCheck) {
+      console.log('passwords are different');
+      return;
+      
+    } else {
+      console.log('passwords are the same');
+    }
+
+    console.log(username, email, password, passwordCheck);
+    document.querySelector('#signup_errors').textContent = '';
+    fetch('/api/user', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        username: email,
+        username,
+        email,
         password,
       }),
     }).then((result) => {
       if (!result.ok) {
-        document.querySelector('#errors').textContent = 'Incorrect Email or Password.';
+        document.querySelector('#signup_errors').textContent = 'Invalid Username, Email, or Password';
         return null;
       } else {
         return result.json();
